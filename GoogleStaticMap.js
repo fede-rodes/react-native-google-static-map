@@ -1,53 +1,51 @@
-import {Image, PixelRatio} from 'react-native';
-import React, {Component} from 'react';
+import { Image, PixelRatio } from 'react-native';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-const defaultMapScale = ()=> {
+const defaultMapScale = () => {
   const isRetina = PixelRatio.get() >= 2;
   return isRetina ? 2 : 1;
 };
 
-const values = (obj)=> {
-  return Object.keys(obj).map(key => obj[key]);
-};
+const values = (obj) => Object.keys(obj).map((key) => obj[key]);
 
 const IMAGE_FORMATS = {
-  //png8 or png (default) specifies the 8-bit PNG format.
+  // png8 or png (default) specifies the 8-bit PNG format.
   PNG: 'png',
 
-  //png32 specifies the 32-bit PNG format.
+  // png32 specifies the 32-bit PNG format.
   PNG32: 'png32',
 
-  //gif specifies the GIF format.
+  // gif specifies the GIF format.
   GIF: 'gif',
 
-  //jpg specifies the JPEG compression format.
+  // jpg specifies the JPEG compression format.
   JPG: 'jpg',
 
-  //jpg-baseline specifies a non-progressive JPEG compression format.
-  JPG_BASELINE: 'jpg-baseline'
+  // jpg-baseline specifies a non-progressive JPEG compression format.
+  JPG_BASELINE: 'jpg-baseline',
 };
 
 const MAP_TYPES = {
-  //roadmap (default) specifies a standard roadmap image, as is normally shown on the Google Maps website.
+  // roadmap (default) specifies a standard roadmap image, as is normally shown on the Google Maps website.
   ROADMAP: 'roadmap',
 
-  //satellite specifies a satellite image.
+  // satellite specifies a satellite image.
   SATELLITE: 'satellite',
 
-  //terrain specifies a physical relief map image, showing terrain and vegetation.
+  // terrain specifies a physical relief map image, showing terrain and vegetation.
   TERRAIN: 'terrain',
 
-  //hybrid specifies a hybrid of the satellite and roadmap image,
+  // hybrid specifies a hybrid of the satellite and roadmap image,
   // showing a transparent layer of major streets and place names on the satellite image.
-  HYBRID: 'hybrid'
+  HYBRID: 'hybrid',
 };
 
 const IMAGE_FORMATS_VALUES = values(IMAGE_FORMATS);
 const MAP_TYPES_VALUES = values(MAP_TYPES);
 
 // the Image's source should be ignored
-const {source, ...imagePropTypes} = Image.propTypes;
+const { source, ...imagePropTypes } = Image.propTypes;
 
 
 /**
@@ -58,7 +56,6 @@ const {source, ...imagePropTypes} = Image.propTypes;
  * @example: http://staticmapmaker.com/google/
  */
 class GoogleStaticMap extends Component {
-
   /**
    * https://developers.google.com/maps/documentation/staticmaps/intro#api_key
    */
@@ -79,7 +76,7 @@ class GoogleStaticMap extends Component {
 
     size: PropTypes.shape({
       width: PropTypes.number.isRequired,
-      height: PropTypes.number.isRequired
+      height: PropTypes.number.isRequired,
     }),
 
     /**
@@ -116,7 +113,7 @@ class GoogleStaticMap extends Component {
 
     onError: PropTypes.func,
 
-    onLoad: PropTypes.func
+    onLoad: PropTypes.func,
   };
 
   static defaultProps = {
@@ -125,18 +122,18 @@ class GoogleStaticMap extends Component {
     mapType: MAP_TYPES.ROADMAP,
     hasCenterMarker: true,
     onLoad: () => {},
-    onError: () => {}
+    onError: () => {},
   };
 
   render() {
     return (
       <Image
         style={[this.props.style, this.props.size]}
-        source={{uri: this.staticMapUrl}}
-        onError={({nativeEvent: {error}}) => this.props.onError()}
-        onLoad={({nativeEvent: {error}}) => this.props.onLoad()}
+        source={{ uri: this.staticMapUrl }}
+        onError={this.props.onError}
+        onLoad={this.props.onLoad}
       >
-      {this.props.children}
+        {this.props.children}
       </Image>
     );
   }
@@ -149,10 +146,10 @@ class GoogleStaticMap extends Component {
       size,
       scale,
       format,
-      mapType
-      } = this.props;
+      mapType,
+    } = this.props;
 
-    const {width, height} = size;
+    const { width, height } = size;
     const rootUrl = this.constructor.RootUrl;
 
     return `${rootUrl}?center=${latitude},${longitude}&zoom=${zoom}&scale=${scale}&size=${width}x${height}&maptype=${mapType}&format=${format}&${this.markerParams}&${this.apiKeyParam}`;
@@ -162,15 +159,15 @@ class GoogleStaticMap extends Component {
     const {
       latitude,
       longitude,
-      hasCenterMarker
-      } = this.props;
+      hasCenterMarker,
+    } = this.props;
 
     const markerParams = `markers=${latitude},${longitude}`;
     return hasCenterMarker ? markerParams : '';
   }
 
   get apiKeyParam() {
-    const apiKey = this.props.apiKey;
+    const { apiKey } = this.props;
 
     return apiKey ? `key=${apiKey}` : '';
   }
